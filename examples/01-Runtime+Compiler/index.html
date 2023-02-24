@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Runtime+Compiler</title>
+</head>
+<body>
+  <div id="app">
+    Hello World
+  </div>
+
+  <!-- 导入的是完整版 并且模块化方式是：UMD 支持在的浏览器中直接使用 -->
+  <!-- <script src="../../dist/vue.js"></script> -->
+
+  <!-- 运行时版本（不含编译器） 解析不了 template-->
+  <script src="../../dist/vue.runtime.js"></script>
+  <script>
+    // compiler
+    // const vm = new Vue({
+    //   el:'#app',
+    //   // 需要编译器，把 template 转换成 render 函数
+    //   template: '<h1>{{ msg }}</h1>',
+    //   data: {
+    //     msg: 'Hello Vue'
+    //   }
+    // })
+    const vm = new Vue({
+      el:'#app',
+      // template: '<h1>{{ msg }}</h1>',
+      render(h) {
+        // h 函数就是用来创建虚拟 Dom 的
+        // 第一个参数：选择器，第二个参数：选择器中要渲染的内容
+        return h('h1', this.msg)
+      },
+      data: {
+        msg: 'Hello Vue'
+      }
+    })
+  </script>
+</body>
+</html>
