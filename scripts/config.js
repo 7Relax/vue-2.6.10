@@ -27,8 +27,10 @@ const weexFactoryPlugin = {
 
 const aliases = require('./alias')
 const resolve = p => {
-  const base = p.split('/')[0]
+  // 根据路径中的前半部分去 aliases 中找别名
+  const base = p.split('/')[0] // web/entry-runtime-with-compiler.js
   if (aliases[base]) {
+    // ..../src/platforms/web/entry-runtime-with-compiler.js
     return path.resolve(aliases[base], p.slice(base.length + 1))
   } else {
     return path.resolve(__dirname, '../', p)
@@ -121,10 +123,10 @@ const builds = {
   },
   // Runtime+compiler development build (Browser)
   'web-full-dev': {
-    entry: resolve('web/entry-runtime-with-compiler.js'),
+    entry: resolve('web/entry-runtime-with-compiler.js'), // resolve: 转换成绝对路径
     dest: resolve('dist/vue.js'),
-    format: 'umd',
-    env: 'development',
+    format: 'umd',      // 模块化的方式
+    env: 'development', // 打包方式
     alias: { he: './entity-decoder' },
     banner
   },
@@ -215,6 +217,7 @@ const builds = {
 
 function genConfig (name) {
   const opts = builds[name]
+  // config: 所有的配置信息
   const config = {
     input: opts.entry,
     external: opts.external,
@@ -263,6 +266,8 @@ function genConfig (name) {
   return config
 }
 
+// 判断环境变量是否有 TARGET - web-full-dev
+// 如果有的话 使用 genConfig() 生成 rollup 配置文件
 if (process.env.TARGET) {
   module.exports = genConfig(process.env.TARGET)
 } else {
