@@ -13,31 +13,40 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-
+// 保留 Vue 实例的 $mount 方法
 const mount = Vue.prototype.$mount
+// $mount 是在什么地方调用的呢？--- 在 Vue 的实例方法_init() 中调用的
 Vue.prototype.$mount = function (
   el?: string | Element,
+  // 非ssr情况下为 false，ssr时候为true
   hydrating?: boolean
 ): Component {
+  // 获取 el 对象
   el = el && query(el)
 
   /* istanbul ignore if */
+  // el 不能是 body 或者 html
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
+      // Vue 不能挂载到 html 或 body 标签上来，只能挂载到普通的元素上
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
     )
+    // 直接返回 Vue 实例
     return this
   }
 
   const options = this.$options
-  // resolve template/el and convert to render function
-  if (!options.render) {
+  // 以下就是在做一件事，把 template/el 转换成 render 函数
+  if (!options.render) { // 传了 render函数 则不会处理 template
+    // 取模板
     let template = options.template
+    // 如果模板存在
     if (template) {
-      if (typeof template === 'string') {
+      if (typeof template === 'string') { // 模板是否为字符串
+        // 如果模板是 id 选择器
         if (template.charAt(0) === '#') {
+          // 获取对应的 DOM 元素的 innerHTML
           template = idToTemplate(template)
-          /* istanbul ignore if */
           if (process.env.NODE_ENV !== 'production' && !template) {
             warn(
               `Template element not found or is empty: ${options.template}`,
@@ -45,7 +54,7 @@ Vue.prototype.$mount = function (
             )
           }
         }
-      } else if (template.nodeType) {
+      } else if (template.nodeType) { // 模板是一个 DOM 元素
         template = template.innerHTML
       } else {
         if (process.env.NODE_ENV !== 'production') {
@@ -54,6 +63,7 @@ Vue.prototype.$mount = function (
         return this
       }
     } else if (el) {
+      // 没有模板 - 就使用 el 对应元素的内容当成模板
       template = getOuterHTML(el)
     }
     if (template) {
@@ -79,6 +89,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 调用 mount 方法，将 render 中的内容渲染出来
   return mount.call(this, el, hydrating)
 }
 
