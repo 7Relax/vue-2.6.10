@@ -27,13 +27,18 @@ Vue.config.getTagNamespace = getTagNamespace
 Vue.config.isUnknownElement = isUnknownElement
 
 // install platform runtime directives & components
+// 注册与平台相关的全局指令 v-model v-show
+// 注册与平台相关的全局组件 Transition TransitionGroup
+// extend 方法作用：把第二个参数的所有成员 拷贝到 第一个参数中去
 extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
 // install platform patch function
-Vue.prototype.__patch__ = inBrowser ? patch : noop
+// 在 Vue 的原型对象上注册了一个 __patch__ 函数，其功能：把虚拟DOM 转换成 真实DOM
+Vue.prototype.__patch__ = inBrowser ? patch : noop // noop 是一个空函数
 
 // public mount method
+// 注册 $mount
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean

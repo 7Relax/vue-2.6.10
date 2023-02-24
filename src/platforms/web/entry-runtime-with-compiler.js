@@ -13,7 +13,7 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-// 保留 Vue 实例的 $mount 方法
+// 保留 Vue 实例的 $mount 方法 - 目的是重写这个 mount 方法，给 mount 方法添加新功能（可以编译模板）
 const mount = Vue.prototype.$mount
 // $mount 是在什么地方调用的呢？--- 在 Vue 的实例方法_init() 中调用的
 Vue.prototype.$mount = function (
@@ -36,8 +36,8 @@ Vue.prototype.$mount = function (
   }
 
   const options = this.$options
-  // 以下就是在做一件事，把 template/el 转换成 render 函数
-  if (!options.render) { // 传了 render函数 则不会处理 template
+  // 如果没有 rander 选项，把会把 template 或 el 转换成 render 函数
+  if (!options.render) { // 有 render 函数 则不会处理 template
     // 取模板
     let template = options.template
     // 如果模板存在
@@ -107,6 +107,7 @@ function getOuterHTML (el: Element): string {
   }
 }
 
+// 注册 compile，这个方法接收一个 HTML 字符串，然后返回 render 函数
 Vue.compile = compileToFunctions
 
 export default Vue
