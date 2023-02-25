@@ -42,6 +42,7 @@ export default class Watcher {
   getter: Function;
   value: any;
 
+  // 在Vue中有3种Watcher：1.渲染watcher 2.计算属性的watcher 3.侦听器的watcher
   constructor (
     vm: Component,
     expOrFn: string | Function,
@@ -50,6 +51,7 @@ export default class Watcher {
     isRenderWatcher?: boolean
   ) {
     this.vm = vm
+    // 是否是渲染Watcher
     if (isRenderWatcher) {
       vm._watcher = this
     }
@@ -58,6 +60,8 @@ export default class Watcher {
     if (options) {
       this.deep = !!options.deep
       this.user = !!options.user
+      // lazy: 是否延迟更新视图，如果是首次渲染的话，就要立即更新。
+      // 如果是计算属性的watcher的话它就会延迟执行，只有当数据变化的时候才会去更新视图
       this.lazy = !!options.lazy
       this.sync = !!options.sync
       this.before = options.before
@@ -99,10 +103,14 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
+    // pushTarget(this) 作用：把当前的 watcher 对象保存起来：
+    // 每个组件都会对应一个 watcher, watcher 就会去渲染视图，如果组件有嵌套的话，
+    // 它会先渲染内部的组件，所以它要把父组件对应的 watcher 先保存起来
     pushTarget(this)
     let value
     const vm = this.vm
     try {
+      // 调用传入的 expOrFn，并且改变函数内部this的指向(Vue实例)
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {

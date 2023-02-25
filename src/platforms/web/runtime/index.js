@@ -44,6 +44,7 @@ Vue.prototype.$mount = function (
   hydrating?: boolean
 ): Component {
   el = el && inBrowser ? query(el) : undefined
+  // mountComponent 这个方法是和平台无关的，是 Vue 的核心代码
   return mountComponent(this, el, hydrating)
 }
 

@@ -48,7 +48,7 @@ Vue.prototype.$mount = function (
       if (typeof template === 'string') { // 模板是否为字符串
         // 如果模板是 id 选择器
         if (template.charAt(0) === '#') {
-          // 获取对应的 DOM 元素的 innerHTML
+          // 获取对应的 DOM 元素的 innerHTML 作为模板
           template = idToTemplate(template)
           if (process.env.NODE_ENV !== 'production' && !template) {
             warn(
@@ -75,6 +75,7 @@ Vue.prototype.$mount = function (
         mark('compile')
       }
 
+      // 把 template 模块转换成 redner 函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -82,6 +83,7 @@ Vue.prototype.$mount = function (
         delimiters: options.delimiters,
         comments: options.comments
       }, this)
+      // 将 render 存入 options 选项中
       options.render = render
       options.staticRenderFns = staticRenderFns
 

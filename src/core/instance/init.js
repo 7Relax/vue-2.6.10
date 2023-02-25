@@ -40,12 +40,13 @@ export function initMixin (Vue: Class<Component>) {
     // 将用户传入的 options 和初始化时构造函数中的 options 合并起来
     console.log('初始化时用户传入 Vue 构造函数的 options = ', options)
     console.log('Vue 构造函数的 options: vm.constructor.options = ', vm.constructor.options)
-    if (options && options._isComponent) {
+    if (options && options._isComponent) { // 判断当前 vm 是不是组件
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
-      initInternalComponent(vm, options)
+      initInternalComponent(vm, options) // 如果是组件则通过 initInternalComponent 合并 options 选择
     } else {
+      // 当前是 Vue实例，不是组件
       vm.$options = mergeOptions(
         // vm.constructor 指向 Vue
         resolveConstructorOptions(vm.constructor),

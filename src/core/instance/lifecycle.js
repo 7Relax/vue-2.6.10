@@ -179,6 +179,7 @@ export function mountComponent (
 
   let updateComponent
   /* istanbul ignore if */
+  // 开发环境 && 开启性能监测
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
     updateComponent = () => {
       const name = vm._name
@@ -197,7 +198,11 @@ export function mountComponent (
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    // 定义 updateComponent 方法 - 在 Watcher 中调用的
     updateComponent = () => {
+      // vm._render() 作用：调用用户传入的 render 或编译模板生成的 render，最终会返回虚拟DOM
+      // 把虚拟DOM 传给 vm._update -> vm._update 方法内部会帮我们将虚拟DOM 转换成 真实DOM
+      // 并更新到界面上
       vm._update(vm._render(), hydrating)
     }
   }
