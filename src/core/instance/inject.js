@@ -5,8 +5,11 @@ import { warn, hasSymbol } from '../util/index'
 import { defineReactive, toggleObserving } from '../observer/index'
 
 export function initProvide (vm: Component) {
+  console.log('initProvide() - 被调用 - 初始化 provide，从 vm.$options 中找到 provide 对象，并将其处理后赋值给 vm._provided 后面在依赖注入的操作时要用到')
+
   const provide = vm.$options.provide
   if (provide) {
+    // _provided 这个属性会在依赖注入中用到
     vm._provided = typeof provide === 'function'
       ? provide.call(vm)
       : provide
@@ -14,6 +17,8 @@ export function initProvide (vm: Component) {
 }
 
 export function initInjections (vm: Component) {
+  console.log('initInjections() - 被调用 - 把 inject 的成员注入到 vm 上（inject 的成员需要在 vm._provided 存在的属性），并设置成响应式数据')
+
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
     toggleObserving(false)

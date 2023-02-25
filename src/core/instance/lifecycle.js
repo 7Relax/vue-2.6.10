@@ -30,9 +30,11 @@ export function setActiveInstance(vm: Component) {
 }
 
 export function initLifecycle (vm: Component) {
+  console.log('initLifecycle() - 被调用 - 初始化和 vm 生命周期相关的变量')
   const options = vm.$options
 
   // locate first non-abstract parent
+  // 找到当前Vue实例的父组件，并把当前Vue实例添加到其父组件的 $children 中
   let parent = options.parent
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
@@ -47,6 +49,7 @@ export function initLifecycle (vm: Component) {
   vm.$children = []
   vm.$refs = {}
 
+  // 私有成员
   vm._watcher = null
   vm._inactive = null
   vm._directInactive = false
@@ -56,6 +59,10 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  console.log('lifecycleMixin() - 被调用 ...')
+
+  // _update 方法的作用是把 VNoe 渲染成真实的 DOM
+  // 首次渲染会调用，数据更新会调用
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -64,11 +71,15 @@ export function lifecycleMixin (Vue: Class<Component>) {
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+    // 判断是否是首次渲染
     if (!prevVnode) {
       // initial render
+      // 这里是首次渲染
+      // __patch__ 方法：把虚拟DOM 转换成 真实DOM，最终挂载到 $el 中
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
       // updates
+      // 数据更新
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
     restoreActiveInstance()
@@ -334,6 +345,8 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
 }
 
 export function callHook (vm: Component, hook: string) {
+  console.log(`callHooks() - 被调用 - 触发生命周期钩子函数 ${hook}`)
+
   // #7573 disable dep collection when invoking lifecycle hooks
   pushTarget()
   const handlers = vm.$options[hook]

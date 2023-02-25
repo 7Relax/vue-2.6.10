@@ -19,6 +19,8 @@ import {
 } from '../util/index'
 
 export function initGlobalAPI (Vue: GlobalAPI) {
+  console.log('initGlobalAPI() - 被调用 ...')
+
   // config
   const configDef = {}
   configDef.get = () => config

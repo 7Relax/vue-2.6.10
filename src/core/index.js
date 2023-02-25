@@ -4,6 +4,7 @@ import { isServerRendering } from 'core/util/env'
 import { FunctionalRenderContext } from 'core/vdom/create-functional-component'
 
 // 给 Vue 的构造函数添加一些静态方法
+console.log('在 src/core/index.js 里调用 initGlobalAPI(Vue) 准备初始化 静态成员 ...')
 initGlobalAPI(Vue)
 
 Object.defineProperty(Vue.prototype, '$isServer', {

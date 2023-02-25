@@ -17,20 +17,29 @@ import VNode, { createEmptyVNode } from '../vdom/vnode'
 import { isUpdatingChildComponent } from './lifecycle'
 
 export function initRender (vm: Component) {
+  console.log(`initRender() - 被调用 - 初始化 render 函数中的 h 函数，并且还初始化了几个属性：
+    $slots / $scopedSlots / _c / $createElement / $attrs / $listeners 其中 $createElement 就是 h 函数（把虚拟DOM 转换成真实DOM）`)
+
   vm._vnode = null // the root of the child tree
   vm._staticTrees = null // v-once cached trees
   const options = vm.$options
   const parentVnode = vm.$vnode = options._parentVnode // the placeholder node in parent tree
   const renderContext = parentVnode && parentVnode.context
+
+  // 初始化了 $slots 和 $scopedSlots 两个和插槽相关的属性
   vm.$slots = resolveSlots(options._renderChildren, renderContext)
   vm.$scopedSlots = emptyObject
+
   // bind the createElement fn to this instance
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
+  // 模板编译生成的 render 函数，这个 render 函数内部会调用 _c()
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
+
   // normalization is always applied for the public version, used in
   // user-written render functions.
+  // 手写传入的 render 函数，$createElement 就是 h 函数，把虚拟DOM 转换成 真实DOM
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 
   // $attrs & $listeners are exposed for easier HOC creation.
@@ -39,6 +48,7 @@ export function initRender (vm: Component) {
 
   /* istanbul ignore else */
   if (process.env.NODE_ENV !== 'production') {
+    // defineReactive 定义响应式数据：$attrs $listeners
     defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, () => {
       !isUpdatingChildComponent && warn(`$attrs is readonly.`, vm)
     }, true)
@@ -59,15 +69,20 @@ export function setCurrentRenderingInstance (vm: Component) {
 }
 
 export function renderMixin (Vue: Class<Component>) {
+  console.log('renderMixin() - 被调用 ...')
+
   // install runtime convenience helpers
+  // 安装了渲染相关的帮助方法
   installRenderHelpers(Vue.prototype)
 
+  // 注册了 $nextTick()
   Vue.prototype.$nextTick = function (fn: Function) {
     return nextTick(fn, this)
   }
 
   Vue.prototype._render = function (): VNode {
     const vm: Component = this
+    // 从 $options 中拿到 render 函数（用户定义的 render 或者是 模板渲染的 render）
     const { render, _parentVnode } = vm.$options
 
     if (_parentVnode) {
@@ -88,6 +103,7 @@ export function renderMixin (Vue: Class<Component>) {
       // separately from one another. Nested component's render fns are called
       // when parent component is patched.
       currentRenderingInstance = vm
+      // 这里的 vm.$createElement 就是 h 函数，作用是生成虚拟DOM
       vnode = render.call(vm._renderProxy, vm.$createElement)
     } catch (e) {
       handleError(e, vm, `render`)

@@ -4,6 +4,7 @@ import { ASSET_TYPES } from 'shared/constants'
 import { isPlainObject, validateComponentName } from '../util/index'
 
 export function initAssetRegisters (Vue: GlobalAPI) {
+  console.log('initAssetRegisters() - 被调用 ...')
   /**
    * Create asset registration methods.
    */

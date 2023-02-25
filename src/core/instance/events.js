@@ -10,11 +10,17 @@ import {
 import { updateListeners } from '../vdom/helpers/index'
 
 export function initEvents (vm: Component) {
+  console.log(`initEvents() - 被调用 - 初始化和 vm 相关的事件，当调用 vm.$on('', () => {}) 会把事件存入到 vm._events 数组中`)
+
+  // _events 作用：存放事件名称 和 事件处理函数
+  // 当调用 vm.$on('', () => {}) 会把事件存入到 vm._events 中
   vm._events = Object.create(null)
   vm._hasHookEvent = false
   // init parent attached events
+  // 获取父组件上附加的事件
   const listeners = vm.$options._parentListeners
   if (listeners) {
+    // 把父组件上的附加事件 注册到当前组件 vm 上
     updateComponentListeners(vm, listeners)
   }
 }
@@ -50,14 +56,19 @@ export function updateComponentListeners (
 }
 
 export function eventsMixin (Vue: Class<Component>) {
+  console.log('eventsMixin() - 被调用 ...')
+
   const hookRE = /^hook:/
   Vue.prototype.$on = function (event: string | Array<string>, fn: Function): Component {
     const vm: Component = this
     if (Array.isArray(event)) {
       for (let i = 0, l = event.length; i < l; i++) {
+        // event 是数组则继续调用 $on()
+        // 可以给多个事件，注册同一个事件处理函数
         vm.$on(event[i], fn)
       }
     } else {
+      // event 是字符串
       (vm._events[event] || (vm._events[event] = [])).push(fn)
       // optimize hook:event cost by using a boolean flag marked at registration
       // instead of a hash lookup

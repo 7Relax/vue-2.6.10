@@ -3,6 +3,8 @@
 import { mergeOptions } from '../util/index'
 
 export function initMixin (Vue: GlobalAPI) {
+  console.log('initMixin() - 被调用 ...')
+
   Vue.mixin = function (mixin: Object) {
     // 将 mixin 对象中的成员拷贝到 this.options 中
     // this.options 就是 Vue.options

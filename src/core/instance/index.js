@@ -8,12 +8,13 @@ import { warn } from '../util/index'
 // 创建 Vue 的构造函数
 // 此处不用 class 的原因是：方便后续给 Vue 实例混入实例成员
 function Vue (options) {
+  console.log('Vue 构造函数 - 被调用 ...')
   // 判断 this 是否是 Vue 的实例，如果不是则说明没有用 new 来调用 Vue()
   // 也就是说把 Vue 当作是一个普通函数，此时会发出警告
   if (process.env.NODE_ENV !== 'production' && !(this instanceof Vue) ) {
     warn('Vue is a constructor and should be called with the `new` keyword')
   }
-  // 调用 _init()
+  // 调用实例的 _init() 方法
   this._init(options)
 }
 

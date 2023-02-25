@@ -46,6 +46,8 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 
 export function initState (vm: Component) {
+  console.log('initState() - 被调用 - 初始化 vm 的 _props / methods / _data / computed / watch')
+
   vm._watchers = []
   const opts = vm.$options
   if (opts.props) initProps(vm, opts.props)
@@ -317,6 +319,7 @@ function createWatcher (
 }
 
 export function stateMixin (Vue: Class<Component>) {
+  console.log('stateMixin() - 被调用 ...')
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.
@@ -336,6 +339,10 @@ export function stateMixin (Vue: Class<Component>) {
       warn(`$props is readonly.`, this)
     }
   }
+
+  // 为何使用 defineProperty 来定义 $data $props 是有原因的：
+  // 设置的两个成员 dataDef 和 propsDef 都定义了 set 方法，只要对其赋值就会有警告
+  // 也就是说不能给：Vue.prototype.$data 或者 Vue.prototype.$props 赋值
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 

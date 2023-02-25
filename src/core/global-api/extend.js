@@ -5,6 +5,7 @@ import { defineComputed, proxy } from '../instance/state'
 import { extend, mergeOptions, validateComponentName } from '../util/index'
 
 export function initExtend (Vue: GlobalAPI) {
+  console.log('initExtend() - 被调用 ...')
   /**
    * Each instance constructor, including Vue, has a unique
    * cid. This enables us to create wrapped "child

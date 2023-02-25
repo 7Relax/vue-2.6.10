@@ -3,6 +3,8 @@
 import { toArray } from '../util/index'
 
 export function initUse (Vue: GlobalAPI) {
+  console.log('initUse() - 被调用 ...')
+
   // 给 Vue 增加了一个 use 的静态方法
   Vue.use = function (plugin: Function | Object) {
     // 此处的 this 是谁？我们调用的是 Vue.use() 那么 use 就是 Vue 构造函数调用的
