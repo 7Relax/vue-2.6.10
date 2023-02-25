@@ -50,13 +50,20 @@ export function initState (vm: Component) {
 
   vm._watchers = []
   const opts = vm.$options
+  // 判断 $options 中是否有 props / methods / data / computed / watch，如果有就进行初始化
+  // initProps 作用：将 props 中的成员转换成响应式数据并注入到 vm._props 上
   if (opts.props) initProps(vm, opts.props)
+  // initMethods 作用：把选项中的 methods 注入到 Vue 实例上（vm[key]），在注入前先会判断一下
+  // 方法的名称是否在 props 中存在，并且方法名不建议以 _ $ 开头
   if (opts.methods) initMethods(vm, opts.methods)
+  // initData 作用：把 data 中的成员注入到 vm_data 上，并且设置成响应式数据，在注入前会进行相关判断
   if (opts.data) {
     initData(vm)
   } else {
+    // 没有 data 则给 vm 初始化一个 _data 的属性，然后再通过 observe 将 _data 转换成响应式对象
     observe(vm._data = {}, true /* asRootData */)
   }
+  // 初始化 计算属性 和 侦听器
   if (opts.computed) initComputed(vm, opts.computed)
   if (opts.watch && opts.watch !== nativeWatch) {
     initWatch(vm, opts.watch)
@@ -74,6 +81,7 @@ function initProps (vm: Component, propsOptions: Object) {
   if (!isRoot) {
     toggleObserving(false)
   }
+  // 遍历 props 中的所有属性
   for (const key in propsOptions) {
     keys.push(key)
     const value = validateProp(key, propsOptions, propsData, vm)
@@ -87,6 +95,7 @@ function initProps (vm: Component, propsOptions: Object) {
           vm
         )
       }
+      // 通过 defineReactive 把这些属性转换成 set/getter
       defineReactive(props, key, value, () => {
         if (!isRoot && !isUpdatingChildComponent) {
           warn(
@@ -104,6 +113,7 @@ function initProps (vm: Component, propsOptions: Object) {
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
+    // 注入到 vm._props 中，将来所有的 props 成员都会在 vm_props 中存储
     if (!(key in vm)) {
       proxy(vm, `_props`, key)
     }
@@ -113,6 +123,8 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+  // 判断 data 选项是否是 function，如果是则一般是Vue组件中data
+  // 如果不是则直接返回 data
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
@@ -125,6 +137,7 @@ function initData (vm: Component) {
     )
   }
   // proxy data on instance
+  // 获取 data 中的所有属性，同时还获取了 props、methods 中的所有属性，目的：判断是否有同名
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods
@@ -145,11 +158,12 @@ function initData (vm: Component) {
         `Use prop default value instead.`,
         vm
       )
-    } else if (!isReserved(key)) {
+    } else if (!isReserved(key)) { // 如果是以 _ $ 开头的 data 属性，不会注入到 vm._data 中
       proxy(vm, `_data`, key)
     }
   }
   // observe data
+  // 把 data 转换成响应式对象
   observe(data, true /* asRootData */)
 }
 
@@ -265,6 +279,7 @@ function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {
     if (process.env.NODE_ENV !== 'production') {
+      // methods 中的成员必须是 funciton
       if (typeof methods[key] !== 'function') {
         warn(
           `Method "${key}" has type "${typeof methods[key]}" in the component definition. ` +
@@ -272,12 +287,14 @@ function initMethods (vm: Component, methods: Object) {
           vm
         )
       }
+      // methods 中属性的名称是否在props中存在，因为最终都要注入到Vue实例上，所以不能同名
       if (props && hasOwn(props, key)) {
         warn(
           `Method "${key}" has already been defined as a prop.`,
           vm
         )
       }
+      // 不建议 methods 中的方法名称以 _ 和 $ 开头
       if ((key in vm) && isReserved(key)) {
         warn(
           `Method "${key}" conflicts with an existing Vue instance method. ` +
@@ -285,6 +302,7 @@ function initMethods (vm: Component, methods: Object) {
         )
       }
     }
+    // methods 中的成员注入的 Vue 实例，并且将方法中的 this 改成 vm
     vm[key] = typeof methods[key] !== 'function' ? noop : bind(methods[key], vm)
   }
 }

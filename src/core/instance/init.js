@@ -81,7 +81,7 @@ export function initMixin (Vue: Class<Component>) {
     // 把 inject 的成员注入到 vm 上
     initInjections(vm) // resolve injections before data/props
 
-    // 初始化 vm 的 _props / methods / _data / computed / watch
+    // 初始化 vm 的 _props / methods / _data / computed / watch ----
     initState(vm)
 
     // 初始化 provide
@@ -97,6 +97,7 @@ export function initMixin (Vue: Class<Component>) {
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
 
+    // 调用 $mount() 挂载整个页面
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
