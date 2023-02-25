@@ -108,6 +108,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 如果 value 不是对象 或者是 VNode 实例 - 就return，表示不需要做响应式处理
   if (!isObject(value) || value instanceof VNode) {
     return
   }
@@ -119,11 +120,12 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     !isServerRendering() &&
     (Array.isArray(value) || isPlainObject(value)) &&
     Object.isExtensible(value) &&
-    !value._isVue
+    !value._isVue // 判断 value 对象是否是 Vue 实例，如果是 Vue 实例就不需要做响应式处理
   ) {
-    ob = new Observer(value)
+    ob = new Observer(value) // 最核心：创建了 observer 对象
   }
   if (asRootData && ob) {
+    // vmCount +1
     ob.vmCount++
   }
   return ob

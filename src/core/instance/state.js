@@ -163,7 +163,7 @@ function initData (vm: Component) {
     }
   }
   // observe data
-  // 把 data 转换成响应式对象
+  // 把 data 转换成响应式对象 - 响应式处理的入口
   observe(data, true /* asRootData */)
 }
 
