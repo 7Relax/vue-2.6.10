@@ -13,6 +13,9 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
+
+// entry-runtime-with-compiler.js 这个文件是打包时候的入口文件
+
 // 保留 Vue 实例的 $mount 方法 - 目的是重写这个 mount 方法，给 mount 方法添加新功能（可以编译模板）
 const mount = Vue.prototype.$mount
 // $mount 是在什么地方调用的呢？--- 在 Vue 的实例方法_init() 中调用的
@@ -107,7 +110,7 @@ function getOuterHTML (el: Element): string {
   }
 }
 
-// 注册 compile，这个方法接收一个 HTML 字符串，然后返回 render 函数
+// 注册 compile，这个方法接收一个 HTML 字符串，然后返回 render 函数，即手工将模板转换成render函数
 Vue.compile = compileToFunctions
 
 export default Vue

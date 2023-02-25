@@ -18,7 +18,7 @@ function Vue (options) {
   this._init(options)
 }
 
-// 设置 Vue 实例的成员
+// 设置 Vue 的实例成员
 initMixin(Vue)       // 注册 vm 的 _init() 方法，初始化 vm
 stateMixin(Vue)      // 注册 vm 的 $data/$props/$set/$delete/$watch （继续混入一些成员）
 eventsMixin(Vue)     // 初始化事件相关方法 $on/$once/$off/$emit

@@ -13,7 +13,7 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
-  console.log('initMixin() - 被调用 ...')
+  console.log('在 src/core/instance/index.js 里调用 initMixin(Vue) - 准备初始化 实例成员 ...')
   // Vue 实例方法 _init 是在这里定义的
   // 合并 options / 初始化操作
   Vue.prototype._init = function (options?: Object) {
