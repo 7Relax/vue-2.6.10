@@ -162,8 +162,9 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean // true 的话只监听 obj 的第一层属性，否则就是深度监听
 ) {
-  // 创建依赖对象实例 - 负责为当前对象的属性来收集依赖，也就是收集 观察当前这个属性的所有 watcher
-  const dep = new Dep()
+  // 为每个属性 都创建一个依赖对象实例 - 负责为当前对象的属性来收集依赖
+  // 也就是收集（收集观察者）所有观察当前这个属性的 观察者watcher
+  const dep = new Dep() // 这个 dep 是负责收集每个属性的依赖
   // 获取 obj 的属性描述符对象
   // 在通过 Object.defineProperty 定义属性的时候，第3个参数就是属性描述符
   // configurable 指定当前属性是否是可配置的，若为 false 就是意味着不可能通过 delete 删除，
@@ -184,18 +185,29 @@ export function defineReactive (
   // shallow 为 false 表示深度监听（多层监听）- 递归处理
   // 如果 val 也是对象，则需要将子对象属性都转换成 getter/setter，返回 子观察对象ob
   let childOb = !shallow && observe(val)
-  // 将属性转换成 getter/setter
-  Object.defineProperty(obj, key, {
+  Object.defineProperty(obj, key, {   // 将属性转换成 getter/setter
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
       // 如果用户设置了 getter 则调用它，从而获取旧值，否则用当前 val
       const value = getter ? getter.call(obj) : val
-      // 收集依赖
+
+      // 收集依赖 - Dep.target 中存储的就是 watcher 对象
+      // Dep.target 是在什么时候初始化的？在创建组件对应的 渲染watcher 的时候
+      // 在 mountComponent 方法里创建的 渲染watcher，在 watcher 的get方法中：pushTarget(this)
+      // watcher 的 get 方法，我们每次访问属性的时候都会被执行，首次渲染和数据变化的时候都会执行get方法
+      // 也就是当我们访问这个属性的时候会收集依赖
       if (Dep.target) {
-        dep.depend()
+        // 收集依赖
+        dep.depend() // 最终要把 watcher 对象添加到 dep.subs 数组中
+
+        // 如果 子观察对象 存在，则建议子观察对象的依赖关系
         if (childOb) {
+          // childOb 就是一个 observer 对象，observer 中的 dep 属性，作用：为当前这个子对象来收集依赖
+          // 为什么要给 子对象 添加依赖呢？
+          // 因为当子对象中发生添加/删除属性操作的时候，也需要发送通知去更新视图
           childOb.dep.depend()
+          // 如果属性是数组，则特殊处理收集数组的依赖
           if (Array.isArray(value)) {
             dependArray(value)
           }

@@ -48,13 +48,14 @@ export default class Watcher {
     expOrFn: string | Function,
     cb: Function,
     options?: ?Object,
-    isRenderWatcher?: boolean
+    isRenderWatcher?: boolean // 是否为 渲染watcher
   ) {
     this.vm = vm
     // 是否是渲染Watcher
     if (isRenderWatcher) {
       vm._watcher = this
     }
+    // 把当前的 watcher 对象存储到 Vue实例的 _watchers 数组中
     vm._watchers.push(this)
     // options
     if (options) {
@@ -107,6 +108,7 @@ export default class Watcher {
     // 每个组件都会对应一个 watcher, watcher 就会去渲染视图，如果组件有嵌套的话，
     // 它会先渲染内部的组件，所以它要把父组件对应的 watcher 先保存起来
     pushTarget(this)
+
     let value
     const vm = this.vm
     try {
@@ -133,12 +135,17 @@ export default class Watcher {
   /**
    * Add a dependency to this directive.
    */
+  // 收集依赖
   addDep (dep: Dep) {
     const id = dep.id
+    // newDepIds 一个 Set 对象
+    // 判断有没有存储过这个 dep id
     if (!this.newDepIds.has(id)) {
+      // newDepIds newDeps 是 wathcer 对象的属性
       this.newDepIds.add(id)
-      this.newDeps.push(dep)
+      this.newDeps.push(dep) // watcher 中为何要添加 dep ?
       if (!this.depIds.has(id)) {
+        // 重点：将 watcher 对象添加到 dep 对象的 subs 数组中
         dep.addSub(this)
       }
     }
