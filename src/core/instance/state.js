@@ -37,7 +37,7 @@ const sharedPropertyDefinition = {
 
 export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.get = function proxyGetter () {
-    return this[sourceKey][key]
+    return this[sourceKey][key] // 这里访问对象的属性就会触发其 getter 方法
   }
   sharedPropertyDefinition.set = function proxySetter (val) {
     this[sourceKey][key] = val
