@@ -318,15 +318,21 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
  */
 export function del (target: Array<any> | Object, key: any) {
   if (process.env.NODE_ENV !== 'production' &&
+    // 若是 undefined null 或是 原始值 则触发警告
     (isUndef(target) || isPrimitive(target))
   ) {
     warn(`Cannot delete reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 判断 target 是否是数组，并且 key 是否是合法的索引
   if (Array.isArray(target) && isValidArrayIndex(key)) {
+    // 通过 splice 删除
+    // 因为 splice 做过响应式处理
     target.splice(key, 1)
     return
   }
+  // 获取 target 中的 observer 对象
   const ob = (target: any).__ob__
+  // 判断 target 是否是 Vue实例 或者是 vm.$data，因为 vm.$data 的 ob 属性的 vmCount 的值是 1
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid deleting properties on a Vue instance or its root $data ' +
@@ -334,13 +340,16 @@ export function del (target: Array<any> | Object, key: any) {
     )
     return
   }
+  // 属性key 不是自身拥有的属性 或者 没有key这个属性 则 return
   if (!hasOwn(target, key)) {
     return
   }
+  // 删除 目标对象上的 key属性
   delete target[key]
   if (!ob) {
     return
   }
+  // 通过 ob 发送通知 更新视图
   ob.dep.notify()
 }
 
