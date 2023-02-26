@@ -337,7 +337,7 @@ function createWatcher (
 }
 
 export function stateMixin (Vue: Class<Component>) {
-  console.log('stateMixin() - 被调用 ...')
+  console.log('stateMixin() - 被调用 - 注册 $data / $props / $set / $delete / $watch')
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.
