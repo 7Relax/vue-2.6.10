@@ -1,7 +1,7 @@
 /* @flow */
 
 // can we use __proto__?
-export const hasProto = '__proto__' in {}
+export const hasProto = '__proto__' in {} // 判断当前浏览器是否支持这个属性
 
 // Browser environment sniffing
 export const inBrowser = typeof window !== 'undefined' // window 存在则是 浏览器环境

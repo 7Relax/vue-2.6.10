@@ -58,10 +58,16 @@ export class Observer {
     // observer 对象的，所以不用设置 getter/setter
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
-      // 对数组做响应式处理
+      // 这个 if 语句主要在做一件事：对可能会改变数组的方法做修补，
+      // 使其可以当数组中的内容发生变化的时候可以通过dep.notify发送通知，通知watcher更新视图
+
+      // hasProto 用来处理浏览器的兼容问题，判断浏览器是否支持__proto__
+      // export const hasProto = '__proto__' in {}
       if (hasProto) {
+        // 使当前数组的原型指向 arrayMethods, arrayMethods 中的数组方法都是经过修补的，可以支持dep
         protoAugment(value, arrayMethods)
       } else {
+        // arrayKeys 是获取 arrayMethods 对象自身有的属性名，而不获取其原型上的
         copyAugment(value, arrayMethods, arrayKeys)
       }
       // 为数组中的每一个对象创建一个 observer 实例
@@ -86,12 +92,12 @@ export class Observer {
       defineReactive(obj, keys[i])
     }
   }
-
   /**
    * Observe a list of Array items.
    */
   observeArray (items: Array<any>) {
     for (let i = 0, l = items.length; i < l; i++) {
+      // 数组中的成员如是对象的话，再把这个对象转换成响应式数组
       observe(items[i])
     }
   }
@@ -117,6 +123,7 @@ function protoAugment (target, src: Object) {
 function copyAugment (target: Object, src: Object, keys: Array<string>) {
   for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i]
+    // 给当前数组 重新定义一些函数
     def(target, key, src[key])
   }
 }
@@ -213,6 +220,7 @@ export function defineReactive (
           }
         }
       }
+
       // 返回属性的值
       return value
     },
