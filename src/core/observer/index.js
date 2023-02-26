@@ -48,11 +48,11 @@ export class Observer {
   constructor (value: any) {
     // 被观察对象
     this.value = value
-    // 依赖收集
+    // 依赖收集 - 每一个 observer 对象中都有一个 dep 对象，它负责为 observer 对应的对象去收集依赖
     this.dep = new Dep()
     // 初始化实例的 vmCount 为 0
     this.vmCount = 0
-    // 将实例挂载到观察对象的 __ob__ 属性
+    // 将 当前observer实例 挂载到 被观察对象(value) 的 __ob__ 属性
     // def 这个方法就是对 Object.defineProperty 做了封装，__ob__ 这个属性设置了不可枚举，
     // 好处是：将来要给 value 对象的属性设置 getter/setter 的，而 __ob__ 只是用来记录
     // observer 对象的，所以不用设置 getter/setter
@@ -64,7 +64,8 @@ export class Observer {
       // hasProto 用来处理浏览器的兼容问题，判断浏览器是否支持__proto__
       // export const hasProto = '__proto__' in {}
       if (hasProto) {
-        // 使当前数组的原型指向 arrayMethods, arrayMethods 中的数组方法都是经过修补的，可以支持dep
+        // 使当前数组的原型指向 arrayMethods
+        // arrayMethods 中的数组方法都是经过修补(改造)的，可以支持dep.notify
         protoAugment(value, arrayMethods)
       } else {
         // arrayKeys 是获取 arrayMethods 对象自身有的属性名，而不获取其原型上的
