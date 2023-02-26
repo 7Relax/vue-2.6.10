@@ -200,7 +200,7 @@ function initComputed (vm: Component, computed: Object) {
 
     if (!isSSR) {
       // create internal watcher for the computed property.
-      watchers[key] = new Watcher(
+      watchers[key] = new Watcher( // 创建 Computed watcher 的地方
         vm,
         getter || noop,
         noop,
@@ -310,6 +310,7 @@ function initMethods (vm: Component, methods: Object) {
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
+    // 所以 handler 可以是个数组
     if (Array.isArray(handler)) {
       for (let i = 0; i < handler.length; i++) {
         createWatcher(vm, key, handler[i])
@@ -326,11 +327,13 @@ function createWatcher (
   handler: any,
   options?: Object
 ) {
+  // 是否是原生对象
   if (isPlainObject(handler)) {
     options = handler
-    handler = handler.handler
+    handler = handler.handler // 取出对象中的回调函数
   }
   if (typeof handler === 'string') {
+    // 如果传的不是函数而是字符串，而在Vue实例中找对应的方法作为 handler 方法
     handler = vm[handler]
   }
   return vm.$watch(expOrFn, handler, options)
@@ -372,20 +375,28 @@ export function stateMixin (Vue: Class<Component>) {
     cb: any,
     options?: Object
   ): Function {
-    const vm: Component = this
+    // 获取 Vue 实例 this
+    const vm: Component = this // $watch 方法内容用到了 Vue的实例，所以$watch没有静态方法
+    // 判断如果 cb 是对象则执行 createWatcher
     if (isPlainObject(cb)) {
       return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {}
+    // 标记为 用户watcher - 这里有个 user 属性
     options.user = true
+    // 创建 用户watcher 对象
     const watcher = new Watcher(vm, expOrFn, cb, options)
+    // 判断 immediate 如果为 true
     if (options.immediate) {
       try {
+        // 立即执行一次 cb 回调，并把当前值传入
+        // 改变回调函数内部的this，让其指向 Vue实例，watcher.value 就是监听的那个属性的值
         cb.call(vm, watcher.value)
       } catch (error) {
         handleError(error, vm, `callback for immediate watcher "${watcher.expression}"`)
       }
     }
+    // 返回取消监听器的方法
     return function unwatchFn () {
       watcher.teardown()
     }

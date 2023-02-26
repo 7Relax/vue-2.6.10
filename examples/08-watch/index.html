@@ -29,14 +29,31 @@
           return this.message.split('').reverse().join('')
         }
       },
-      watch: {
-        'user': {
-          handler: function(nVal, oVal) {
-            this.user.fullName = nVal.firstName + nVal.lastName
-          },
-          immediate: true,
-          deep: true
+      methods: {
+        test() {
+          console.log('这是test()方法...')
         }
+      },
+      watch: {
+        'user': [{
+            handler: function(nVal, oVal) {
+              this.user.fullName = nVal.firstName + nVal.lastName
+            },
+            immediate: true,
+            deep: true
+          }, {
+            handler: 'test', // 还可以是字符串
+            immediate: true,
+            deep: true
+          }
+        ],
+        // 'user': {
+        //   handler: function(nVal, oVal) {
+        //     this.user.fullName = nVal.firstName + nVal.lastName
+        //   },
+        //   immediate: true,
+        //   deep: true
+        // }
       }
     })
 
