@@ -50,13 +50,15 @@ export default class Watcher {
     options?: ?Object,
     isRenderWatcher?: boolean // 是否为 渲染watcher
   ) {
+    // 把 Vue实例 记录到当前 watcher 对象的vm上
     this.vm = vm
     // 是否是渲染Watcher
     if (isRenderWatcher) {
+      // 是渲染watcher 就把当前watcher 记录到当前Vue实例的_watcher上
       vm._watcher = this
     }
     // 把当前的 watcher 对象存储到 Vue实例的 _watchers 数组中
-    vm._watchers.push(this)
+    vm._watchers.push(this) // 我们创建的 计算属性 侦听器 也会创建对应的 watcher
     // options
     if (options) {
       this.deep = !!options.deep
@@ -65,11 +67,11 @@ export default class Watcher {
       // 如果是计算属性的watcher的话它就会延迟执行，只有当数据变化的时候才会去更新视图
       this.lazy = !!options.lazy
       this.sync = !!options.sync
-      this.before = options.before
+      this.before = options.before // 这里会触发生命周期钩子函数 beforeUpdate
     } else {
       this.deep = this.user = this.lazy = this.sync = false
     }
-    this.cb = cb
+    this.cb = cb // 用户wathcer（侦听器），会传入一个回调对比新旧两个值
     this.id = ++uid // uid for batching
     this.active = true
     this.dirty = this.lazy // for lazy watchers
@@ -81,9 +83,12 @@ export default class Watcher {
       ? expOrFn.toString()
       : ''
     // parse expression for getter
+    // expOrFn 是渲染watcher 传过来的第二个参数 updateComponent()
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
+      // expOrFn 是字符串的时候，就相当于拿到了'person.name' 例如：watch: { 'person.name': function() {} }
+      // parsePath：生成一个函数，作用是用来获取 'person.name' 的值，这样就会触发这个属性的 getter
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
         this.getter = noop
@@ -95,11 +100,10 @@ export default class Watcher {
         )
       }
     }
-    this.value = this.lazy
+    this.value = this.lazy // 渲染watcher时候是false，计算属性的话就是true延迟执行
       ? undefined
       : this.get()
   }
-
   /**
    * Evaluate the getter, and re-collect dependencies.
    */
@@ -110,7 +114,7 @@ export default class Watcher {
     pushTarget(this)
 
     let value
-    const vm = this.vm
+    const vm = this.vm // 从watcher中拿到 Vue实例
     try {
       // 调用传入的 expOrFn，并且改变函数内部this的指向(Vue实例)
       value = this.getter.call(vm, vm)
@@ -123,10 +127,13 @@ export default class Watcher {
     } finally {
       // "touch" every property so they are all tracked as
       // dependencies for deep watching
-      if (this.deep) {
+      if (this.deep) { // 深度监听
         traverse(value)
       }
+      // 使当前wathcer 从targetStack出栈
       popTarget()
+      // 把当前watcher 从dep.subs数组中移除，
+      // 并且也会把watcher中记录的dep也给移除，因为整个watcher已经执行完毕
       this.cleanupDeps()
     }
     return value

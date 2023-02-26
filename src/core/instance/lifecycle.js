@@ -201,8 +201,9 @@ export function mountComponent (
     // 定义 updateComponent 方法 - 在 Watcher 中调用的
     updateComponent = () => {
       // vm._render() 作用：调用用户传入的 render 或编译模板生成的 render，最终会返回虚拟DOM
-      // 把虚拟DOM 传给 vm._update -> vm._update 方法内部会帮我们将虚拟DOM 转换成 真实DOM
-      // 并更新到界面上
+      // 把虚拟DOM 传给 vm._update ->
+      // vm._update 方法内部会调用 __patch__ 函数 把将虚拟DOM 转换成 真实DOM 并更新到界面上
+      // vm._update()作用：对比两个虚拟DOM的差异，并且把差异更新到真实DOM上
       vm._update(vm._render(), hydrating)
     }
   }
@@ -210,7 +211,7 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
-  // 创建 watcher 对象的位置
+  // 创建 渲染watcher 对象的位置
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {
