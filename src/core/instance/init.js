@@ -82,7 +82,7 @@ export function initMixin (Vue: Class<Component>) {
     // 把 inject 的成员注入到 vm 上
     initInjections(vm) // resolve injections before data/props
 
-    // 初始化 vm 的 _props / methods / _data / computed / watch ----
+    // 初始化 vm 的 _props / methods / _data / computed / watch --- 用户Watcher 和 Computed Watcher
     initState(vm)
 
     // 初始化 provide
@@ -100,7 +100,7 @@ export function initMixin (Vue: Class<Component>) {
 
     // 调用 $mount() 挂载整个页面
     if (vm.$options.el) {
-      vm.$mount(vm.$options.el)
+      vm.$mount(vm.$options.el) // 渲染watcher 是在这里以后的 mountComponent 函数里初始化的
     }
   }
 }

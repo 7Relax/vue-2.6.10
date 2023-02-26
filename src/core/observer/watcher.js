@@ -190,6 +190,7 @@ export default class Watcher {
     } else if (this.sync) {
       this.run()
     } else {
+      // 渲染watcher在这执行，把当前watcher放到队列里
       queueWatcher(this)
     }
   }
@@ -199,7 +200,7 @@ export default class Watcher {
    * Will be called by the scheduler.
    */
   run () {
-    if (this.active) {
+    if (this.active) { // 当前watcher对象是否是存活状态
       const value = this.get()
       if (
         value !== this.value ||
@@ -210,15 +211,17 @@ export default class Watcher {
         this.deep
       ) {
         // set new value
-        const oldValue = this.value
-        this.value = value
-        if (this.user) {
+        const oldValue = this.value // 获取旧值
+        this.value = value          // 记录新值
+        if (this.user) { // 用户watcher
           try {
+            // 执行回调函数，如：侦听器里的回调，加上try catch 以防止用户传入的回调函数出现异常
             this.cb.call(this.vm, value, oldValue)
           } catch (e) {
             handleError(e, this.vm, `callback for watcher "${this.expression}"`)
           }
         } else {
+          // 渲染watcher的回调是一个空函数noop
           this.cb.call(this.vm, value, oldValue)
         }
       }

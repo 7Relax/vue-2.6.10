@@ -38,13 +38,15 @@ export default class Dep {
 
   notify () {
     // stabilize the subscriber list first
-    const subs = this.subs.slice()
+    const subs = this.subs.slice() // 浅拷贝
     if (process.env.NODE_ENV !== 'production' && !config.async) {
       // subs aren't sorted in scheduler if not running async
       // we need to sort them now to make sure they fire in correct
       // order
+      // 按照watcher对象的id从小到大排序（创建顺序）保证执行watcher的顺序是正确的
       subs.sort((a, b) => a.id - b.id)
     }
+    // 调用每个订阅者(watcher)的update方法来实现更新
     for (let i = 0, l = subs.length; i < l; i++) {
       subs[i].update()
     }
