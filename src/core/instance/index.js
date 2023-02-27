@@ -20,9 +20,9 @@ function Vue (options) {
 
 // 设置 Vue 的实例成员
 initMixin(Vue)       // 注册 vm 的 _init() 方法，初始化 vm
-stateMixin(Vue)      // 注册 vm 的 $data/$props/$set/$delete/$watch （继续混入一些成员）
-eventsMixin(Vue)     // 初始化事件相关方法 $on/$once/$off/$emit
-lifecycleMixin(Vue)  // 初始化生命周期相关的混入方法 _update/$forceUpdate/$destroy
-renderMixin(Vue)     // vm 上 混入 _render/$nextTick
+stateMixin(Vue)      // 注册 vm 的 $data / $props / $set / $delete / $watch （继续混入一些成员）
+eventsMixin(Vue)     // 初始化事件相关方法 $on / $once / $off / $emit
+lifecycleMixin(Vue)  // 初始化生命周期相关的混入方法 _update / $forceUpdate / $destroy
+renderMixin(Vue)     // vm 上 混入 $nextTick / _render
 
 export default Vue

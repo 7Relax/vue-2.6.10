@@ -69,7 +69,7 @@ export function setCurrentRenderingInstance (vm: Component) {
 }
 
 export function renderMixin (Vue: Class<Component>) {
-  console.log('renderMixin() - 被调用 ...')
+  console.log('renderMixin() - 被调用 - $nextTick | _render')
 
   // install runtime convenience helpers
   // 安装了渲染相关的帮助方法
@@ -77,6 +77,7 @@ export function renderMixin (Vue: Class<Component>) {
 
   // 注册了 $nextTick()
   Vue.prototype.$nextTick = function (fn: Function) {
+    // 调用了 nextTick 函数
     return nextTick(fn, this)
   }
 
