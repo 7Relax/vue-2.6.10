@@ -66,7 +66,7 @@ Vue.prototype.$mount = function (
         return this
       }
     } else if (el) {
-      // 没有模板 - 就使用 el 对应元素的内容当成模板
+      // 没有模板 - 就使用 el 的 outerHTML 作为模板
       template = getOuterHTML(el)
     }
     if (template) {

@@ -10,7 +10,7 @@ import {
 import { updateListeners } from '../vdom/helpers/index'
 
 export function initEvents (vm: Component) {
-  console.log(`initEvents() - 被调用 - 初始化和 vm 相关的事件，当调用 vm.$on('', () => {}) 会把事件存入到 vm._events 数组中`)
+  console.log(`initEvents() - 初始化和 vm 事件相关的成员：_events，当调用 vm.$on('', () => {}) 会将事件存入 vm._events 对象中`)
 
   // _events 作用：存放事件名称 和 事件处理函数
   // 当调用 vm.$on('', () => {}) 会把事件存入到 vm._events 中
@@ -56,7 +56,7 @@ export function updateComponentListeners (
 }
 
 export function eventsMixin (Vue: Class<Component>) {
-  console.log('eventsMixin() - 被调用 ...')
+  console.log('eventsMixin() - 注册事件相关的 $on / $once / $off / $emit 实例方法')
 
   const hookRE = /^hook:/
   Vue.prototype.$on = function (event: string | Array<string>, fn: Function): Component {

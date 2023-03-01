@@ -3,7 +3,7 @@
 import { toArray } from '../util/index'
 
 export function initUse (Vue: GlobalAPI) {
-  console.log('initUse() - 被调用 ...')
+  console.log('initUse() - 注册 Vue.use() 用来注册插件')
 
   // 给 Vue 增加了一个 use 的静态方法
   Vue.use = function (plugin: Function | Object) {

@@ -13,8 +13,20 @@
   </div>
 
   <script src="../../dist/vue.js"></script>
+  <!-- <script src="../../dist/vue.runtime.js"></script> -->
+  <!--  -->
   <script>
     const vm = new Vue({
+      props: {
+        url: {
+          type: String,
+          default: 'https://www.seven.com'
+        },
+        arrTest: {
+          type: Array,
+          default: () => ([1, 2, 3])
+        }
+      },
       el:'#app',
       data: {
         message: 'Hello Vue',
@@ -24,6 +36,11 @@
           fullName: '',
         }
       },
+      // render(h) {
+      //   // h 函数就是用来创建虚拟 Dom 的
+      //   // 第一个参数：选择器，第二个参数：选择器中要渲染的内容
+      //   return h('h1', this.reversedMessage)
+      // },
       computed: {
         reversedMessage: function() {
           return this.message.split('').reverse().join('')

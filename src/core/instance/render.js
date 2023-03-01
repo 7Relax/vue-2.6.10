@@ -17,8 +17,9 @@ import VNode, { createEmptyVNode } from '../vdom/vnode'
 import { isUpdatingChildComponent } from './lifecycle'
 
 export function initRender (vm: Component) {
-  console.log(`initRender() - 被调用 - 初始化 render 函数中的 h 函数，并且还初始化了几个属性：
-    $slots / $scopedSlots / _c / $createElement / $attrs / $listeners 其中 $createElement 就是 h 函数（把虚拟DOM 转换成真实DOM）`)
+  console.log(`initRender() - render 中的 h 函数被初始化了，并且还初始化了几个属性：
+    $slots / $scopedSlots / _c / $createElement / $attrs / $listeners
+    其中 $createElement 就是 h 函数（把虚拟DOM 转换成真实DOM）`)
 
   vm._vnode = null // the root of the child tree
   vm._staticTrees = null // v-once cached trees
@@ -69,7 +70,8 @@ export function setCurrentRenderingInstance (vm: Component) {
 }
 
 export function renderMixin (Vue: Class<Component>) {
-  console.log('renderMixin() - 被调用 - $nextTick | _render')
+  console.log('renderMixin() - 注册 $nextTick / _render 实例方法')
+  console.log('')
 
   // install runtime convenience helpers
   // 安装了渲染相关的帮助方法

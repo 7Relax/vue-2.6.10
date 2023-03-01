@@ -4,7 +4,8 @@ import { ASSET_TYPES } from 'shared/constants'
 import { isPlainObject, validateComponentName } from '../util/index'
 
 export function initAssetRegisters (Vue: GlobalAPI) {
-  console.log('initAssetRegisters() - 被调用 ...')
+  console.log('initAssetRegisters() - 循环注册出 Vue.component() / Vue.directive() / Vue.filter()')
+  console.log('')
   /**
    * Create asset registration methods.
    */

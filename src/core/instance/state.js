@@ -46,7 +46,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 
 export function initState (vm: Component) {
-  console.log('initState() - 被调用 - 初始化 vm 的 _props / methods / _data / computed / watch')
+  console.log('initState() - 初始化 vm 的 _props / methods / _data / computed / watch')
 
   vm._watchers = []
   const opts = vm.$options
@@ -340,7 +340,7 @@ function createWatcher (
 }
 
 export function stateMixin (Vue: Class<Component>) {
-  console.log('stateMixin() - 被调用 - 注册 $data / $props / $set / $delete / $watch')
+  console.log('stateMixin() - 注册 $data / $props / $set / $delete / $watch 实例成员')
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.

@@ -19,7 +19,9 @@ import {
 } from '../util/index'
 
 export function initGlobalAPI (Vue: GlobalAPI) {
-  console.log('initGlobalAPI() - 被调用 ...')
+  console.log(`initGlobalAPI() - 向 Vue 构造函数上挂载 util / set / delete / nextTick / observable / options 静态成员,
+    其中在 options 空对象上当即扩展4个成员：(components / directives / filters / _base = Vue)
+    并在 Vue.options.components 注册全局第一个组件 keep-alive`)
 
   // config
   const configDef = {}
@@ -57,7 +59,7 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   }
 
   // 初始化 Vue.options 对象，并给其扩展
-  // components/directives/filters
+  // components / directives / filters
   Vue.options = Object.create(null) // 不需要原型，提高性能
   ASSET_TYPES.forEach(type => {
     // 用于存储全局的 组件 指令 过滤器
@@ -73,9 +75,9 @@ export function initGlobalAPI (Vue: GlobalAPI) {
 
   // 注册 Vue.use() 用来注册插件
   initUse(Vue)
-  // 注册 Vue.mixin() 实现混入
+  // 注册 Vue.mixin() 用来实现混入
   initMixin(Vue)
-  // 注册 Vue.extend() 基于传入的 options 返回一个组件的构造函数(VueComponent)
+  // 注册 Vue.extend() 基于传入的 options 返回一个组件的构造函数(VueComponent) - 做自定义组件时用到
   initExtend(Vue)
   // 注册 Vue.component()、Vue.directive()、Vue.filter()
   initAssetRegisters(Vue)

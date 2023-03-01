@@ -30,7 +30,7 @@ export function setActiveInstance(vm: Component) {
 }
 
 export function initLifecycle (vm: Component) {
-  console.log('initLifecycle() - 被调用 - 初始化和 vm 生命周期相关的变量')
+  console.log('initLifecycle() - 初始化和 vm 生命周期相关的成员 $parent / $root / $children / $refs 还有一些 _私有成员')
   const options = vm.$options
 
   // locate first non-abstract parent
@@ -59,7 +59,7 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
-  console.log('lifecycleMixin() - 被调用 ...')
+  console.log('lifecycleMixin() - 注册 _update / $forceUpdate / $destroy 实例方法')
 
   // _update 方法的作用是把 VNoe 渲染成真实的 DOM
   // 首次渲染会调用，数据更新会调用
@@ -353,7 +353,7 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
 }
 
 export function callHook (vm: Component, hook: string) {
-  console.log(`callHooks() - 被调用 - 触发生命周期钩子函数 ${hook}`)
+  console.log(`callHooks() - 触发生命周期钩子函数 ${hook}`)
 
   // #7573 disable dep collection when invoking lifecycle hooks
   pushTarget()
